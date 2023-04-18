@@ -91,25 +91,47 @@ public class VentanaNombre extends JFrame {
         
     }
     
-     private void obtenerNombre(){
+     private boolean obtenerNombre(){
         String nombre =txtNombre.getText();
         if(!nombre.trim().isEmpty() || nombre.trim().length() > 0){
             Jugador jugador = new Jugador(nombre);        
-            dispose(); 
-            VentanaJuego ventanaJuego = new VentanaJuego();              
+            dispose();
+            return true;
         } else {
             JOptionPane.showMessageDialog(null,"Por favor ingrese su nombre", 
                     "Advertencia", JOptionPane.ERROR_MESSAGE);
             txtNombre.requestFocusInWindow();
+            return false;
         }
     }
+     /**
+      * @brief según el botón que presionaste, determina que tipo de ventana saldrá.
+      */
+ 
+     
+ 
     
     class ManejadorDeEventos implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent evento){
+            if(obtenerNombre() == true){
+                if(evento.getSource() == btnAnimales){
+                    VentanaAnimales ventanaAnimales = new VentanaAnimales();
+                    dispose();
+                }else if(evento.getSource() == btnColores){
+                    VentanaColores ventanaColores = new VentanaColores();
+                    dispose();
+                }else if(evento.getSource() == btnFrutas){
+                    VentanaFrutas ventanaFrutas = new VentanaFrutas();
+                    dispose();
+                }
+            }
             
           
             }
         }
     }
 
+
+
+    

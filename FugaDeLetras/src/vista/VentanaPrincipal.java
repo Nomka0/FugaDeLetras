@@ -84,6 +84,7 @@ public class VentanaPrincipal extends JFrame {
     
     class ManejadorDeEventos implements ActionListener, KeyListener{
         @Override
+        
         public void actionPerformed(ActionEvent evento){
             if(evento.getSource() == btnJugar){                
                VentanaNombre ventana = new VentanaNombre();
