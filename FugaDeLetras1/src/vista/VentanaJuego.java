@@ -250,7 +250,7 @@ public class VentanaJuego extends JFrame{
         int respuesta;
 
         respuesta = JOptionPane.showConfirmDialog(
-                    null,"¿Realmente dese abandonar el juego?", "Advertencia",
+                    null,"¿Realmente desea abandonar el juego?", "Advertencia",
                     JOptionPane.YES_NO_OPTION, 
                     JOptionPane.WARNING_MESSAGE);
         if(respuesta == JOptionPane.YES_OPTION){
