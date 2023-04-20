@@ -110,9 +110,9 @@ public class VentanaNombre extends JFrame {
         public void actionPerformed(ActionEvent evento){
             if (evento.getSource() == btnAnimales){
             obtenerNombre(1);
-            } else if (evento.getSource() == btnFrutas){
-            obtenerNombre(2);
             } else if (evento.getSource() == btnColores){
+            obtenerNombre(2);
+            } else if (evento.getSource() == btnFrutas){
             obtenerNombre(3);
             }     
             
@@ -120,4 +120,3 @@ public class VentanaNombre extends JFrame {
     }
     
    }
-
