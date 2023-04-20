@@ -9,9 +9,9 @@ package modelo;
  * @author Juanjo
  */
 public class Tematica {
-    private String[] palabrasFrutas ={"M_nzana","Per_","Uv_","B_nano","D_razno","Fr_sa"};
-    private String[] palabrasColores ={"Roj_","Amar_llo","Nar_nja","Verd_","Ros_","N_gro"};
-    private String[] palabrasAnimales ={"Le_n","P_rro","G_to","Tigr_","Hormig_","Tortug_"};
+    private String[] palabrasFrutas ={"Manzana","Pera","Uva","Banano","Durazno","Fresa","Melón", "Cereza", "Mango", "Ciruela"};
+    private String[] palabrasColores ={"Rojo","Amarillo","Naranja","Verde","Rosa","Negro", "Morado", "Azul","Gris", "Blanco"};
+    private String[] palabrasAnimales ={"Leon","Perro","Gato","Tigre","Hormiga","Tortuga", "Vaca", "Raton", "Conejo", "Pato"};
 
     public Tematica() {
         
@@ -33,23 +33,13 @@ public class Tematica {
     
     public String getPalabra(int posicion,int modo){
         return switch (modo) {
-            case 1 -> palabrasAnimales[posicion-1]; //aquí coloqué "-1", pero es porque siempre se va al caso default, en lugar de al q le corresponde
-            case 2 -> palabrasColores[posicion-1];
-            case 3 -> palabrasFrutas[posicion-1];
+            case 1 -> palabrasAnimales[posicion];
+            case 2 -> palabrasColores[posicion];
+            case 3 -> palabrasFrutas[posicion];
             default -> null;
         };
     }
     
-    /**
-    public void verificaPalabra(int modo){
-        if(modo == 1){
-            for(int i = 0; i < palabrasFrutas.length-1;i++){
-                
-            }   
-        }
-    
-        
-
-    }*/
+   
     
 }
