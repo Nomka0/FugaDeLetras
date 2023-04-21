@@ -120,3 +120,4 @@ public class VentanaNombre extends JFrame {
     }
     
    }
+
