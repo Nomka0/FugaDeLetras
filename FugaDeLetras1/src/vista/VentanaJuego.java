@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -14,7 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.concurrent.TimeUnit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,36 +35,103 @@ public class VentanaJuego extends JFrame{
     private JLabel jlPalabra;
     private JLabel jlJugador;
     private JLabel jlConsigna;
-    private JPanel jpContenido;   
-    private JButton jOpcion1, jOpcion2, jOpcion3, jOpcion4, jOpcion5, jContinuar;
-    private JLabel jlNombreJugador;
-    private JLabel jlIntentosFallidos;
-    private JLabel jlFallos;
-    private JLabel jlIntentosAciertos;
-    private JLabel jlAciertos;
+    private JLabel jlIlustracion;
+    private JPanel jpContenido, jpRectanguloColor;   
+    private JButton jOpcion1, jOpcion2, jOpcion3, jOpcion4, jOpcion5, jTerminar;
+    private JLabel jlNombreJugador; 
+    private JLabel jlContadorAciertos,jlContadorFallos;
     private String nombreJugador;
-    private int posicionActual;
+    private int posicion;
     private int idTematica;
-    private int aciertos;
-    private int intentosFail;
-    String palabraActual;
-    modelo.Tematica palabras;
+    private char[] vocales = {'a', 'e', 'i', 'o', 'u'};
+    private String palabraCensurada;
+    private char vocalCensurada;
+    modelo.Tematica palabras = new Tematica();
+    Random random = new Random();
+    private String palabra;
+    private int contadorAciertos,contadorFallos = 0;
         
     public VentanaJuego(Jugador jugador, int idTematica){
        nombreJugador = jugador.getNombre();
-       palabras = new Tematica();
-       palabraActual = palabras.getPalabra(posicionActual,idTematica); 
-       posicionActual = 0;
        this.idTematica = idTematica;
+       IniciarJuego();
        iniciarComponentes();
-       //System.out.println(posicionActual);
-       //System.out.println(idTematica);
-       aciertos = 0;
-       intentosFail = 0;
-     
+       colocarImagenes(idTematica, posicion);
+        System.out.println(posicion);
     }
     
+    private void IniciarJuego () {
+        posicion = random.nextInt(9);
+        CensurarPalabra(); 
+    }
+        private void CensurarPalabra(){
+        palabra = palabras.getPalabra(posicion,idTematica);
+        vocalCensurada = vocales[random.nextInt(vocales.length)];
+        if(palabra.indexOf(vocalCensurada) != -1 ){
+        palabraCensurada = palabra.replace(vocalCensurada, '_');}
+        else {
+            CensurarPalabra();
+        }
+        System.out.println(palabraCensurada);
+        }
+        
+//{"Rojo","Amarillo","Naranja","Verde","Rosa","Negro", "Morado", "Azul","Gris", "Blanco"       
+        private void cambiaColor(int color){
+            jpContenido.add(jpRectanguloColor);
+            switch(color){
+                case 0:
+                    jpRectanguloColor.setBackground(Color.RED);
+                    break;
+                case 1:
+                    jpRectanguloColor.setBackground(Color.YELLOW);
+                    break;
+                case 2:
+                    jpRectanguloColor.setBackground(Color.ORANGE);
+                    break;
+                case 3:
+                    jpRectanguloColor.setBackground(Color.GREEN);
+                    break;
+                case 4:
+                    jpRectanguloColor.setBackground(Color.MAGENTA);
+                    break;
+                case 5:
+                    jpRectanguloColor.setBackground(Color.BLACK);
+                    break;
+                case 6:
+                    jpRectanguloColor.setBackground(Color.MAGENTA);
+                    break;
+                case 7:
+                    jpRectanguloColor.setBackground(Color.BLUE);
+                    break;
+                case 8:
+                    jpRectanguloColor.setBackground(Color.GRAY);
+                    break;
+                case 9:
+                    jpRectanguloColor.setBackground(Color.WHITE);
+                    jlPalabra.setForeground(Color.BLACK);
+                    break;
+            }
+            
+        }
+        
+        
+        private void colocarImagenes(int modo,int posicion){
+            switch(modo){
+                case 1:
+                    //return palabrasAnimales.length-1;
+                    break;
+                case 2:
+                    cambiaColor(posicion);
+                    break;
+                case 3:
+                    //return palabrasFrutas.length-1;
+                    break;
+            }               
+        }
+    
         private void iniciarComponentes() {
+            
+        
         
         setTitle("Fuga de Letras");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,80 +148,82 @@ public class VentanaJuego extends JFrame{
         jpContenido.setBackground(Color.PINK);
         add(jpContenido);
         
+        
+
         jlJugador = new JLabel("Jugador: ");
-        jlJugador.setBounds(12,0, 400,30);
+        jlJugador.setBounds(2,0, 400,30);
         jlJugador.setForeground( Color.WHITE);
         jlJugador.setFont(new Font("arial", Font.BOLD, 15));
         jpContenido.add(jlJugador);
         
         
         jlNombreJugador = new JLabel(nombreJugador);
-        jlNombreJugador.setBounds(80,0, 400,30);
+        jlNombreJugador.setBounds(70,0, 400,30);
         jlNombreJugador.setForeground( Color.WHITE);
         jlNombreJugador.setFont(new Font("arial", Font.BOLD, 15));
         jpContenido.add(jlNombreJugador);
-      
-        jlIntentosFallidos = new JLabel("Intentos fallidos: ");
-        jlIntentosFallidos.setBounds(12,233, 400,30);
-        jlIntentosFallidos.setForeground( Color.RED);
-        jlIntentosFallidos.setFont(new Font("arial", Font.BOLD, 15));
-        jpContenido.add(jlIntentosFallidos);
-
-        jlFallos = new JLabel(String.valueOf(intentosFail));
-        jlFallos.setBounds(133,233, 400,30);
-        jlFallos.setForeground( Color.WHITE);
-        jlFallos.setFont(new Font("arial", Font.BOLD, 15));
-        jpContenido.add(jlFallos);
         
-        jlIntentosAciertos = new JLabel("Aciertos: ");
-        jlIntentosAciertos.setBounds(160,233, 400,30);
-        jlIntentosAciertos.setForeground( Color.YELLOW);
-        jlIntentosAciertos.setFont(new Font("arial", Font.BOLD, 15));
-        jpContenido.add(jlIntentosAciertos);
-
-        jlAciertos = new JLabel(String.valueOf(intentosFail));
-        jlAciertos.setBounds(226,233, 400,30);
-        jlAciertos.setForeground( Color.WHITE);
-        jlAciertos.setFont(new Font("arial", Font.BOLD, 15));
-        jpContenido.add(jlAciertos);
+        jlContadorAciertos = new JLabel("Aciertos: " + String.valueOf(contadorAciertos));
+        jlContadorAciertos.setBounds(2,235, 400,30);
+        jlContadorAciertos.setForeground( Color.WHITE);
+        jlContadorAciertos.setFont(new Font("arial", Font.BOLD, 15));
+        jpContenido.add(jlContadorAciertos); 
         
-        jlConsigna = new JLabel("¿Qué letra falta en la siguiente palabra?:",SwingConstants.CENTER);
+        jlContadorFallos = new JLabel("Fallos: " + String.valueOf(contadorFallos));
+        jlContadorFallos.setBounds(200,235, 400,30);
+        jlContadorFallos.setForeground( Color.WHITE);
+        jlContadorFallos.setFont(new Font("arial", Font.BOLD, 15));
+        jpContenido.add(jlContadorFallos);    
+        
+        jlConsigna = new JLabel("¿Qué vocal falta en la siguiente palabra?:",SwingConstants.CENTER);
         jlConsigna.setBounds(55,40, 400,30);
         jlConsigna.setForeground(Color.WHITE);
         jlConsigna.setFont(new Font("arial", Font.BOLD, 20));
         jpContenido.add(jlConsigna);
         
-        jlPalabra = new JLabel(palabras.getPalabra(posicionActual,idTematica),SwingConstants.CENTER);
+        jlPalabra = new JLabel(palabraCensurada,SwingConstants.CENTER);
         jlPalabra.setBounds(40,70, 440,50);
         jlPalabra.setForeground(Color.WHITE);
         jlPalabra.setFont(new Font("arial", Font.BOLD, 20));
         jpContenido.add(jlPalabra);
         
+//{"Leon","Perro","Gato","Tigre","Hormiga","Tortuga", "Vaca", "Raton", "Conejo", "Pato"};
+        jlIlustracion = new JLabel(new ImageIcon());
+        jlIlustracion.setBounds(40,70, 440,50);
+        jpContenido.add(jlIlustracion);        
 
         
-        jOpcion1 = new JButton("a");
+        jOpcion1 = new JButton("A");
         jOpcion1.setBounds(70,140, 50,50);
         jpContenido.add(jOpcion1);
         
-        jOpcion2 = new JButton("e");
+        jOpcion2 = new JButton("E");
         jOpcion2.setBounds(146,140, 50,50);
         jpContenido.add(jOpcion2);
         
-        jOpcion3 = new JButton("i");
+        jOpcion3 = new JButton("I");
         jOpcion3.setBounds(222 ,140, 50,50);
         jpContenido.add(jOpcion3);
 
-        jOpcion4 = new JButton("o");
+        jOpcion4 = new JButton("O");
         jOpcion4.setBounds(298,140, 50,50);
         jpContenido.add(jOpcion4);    
         
-        jOpcion5 = new JButton("u");
+        jOpcion5 = new JButton("U");
         jOpcion5.setBounds(374,140, 50,50);
         jpContenido.add(jOpcion5);
         
-        jContinuar = new JButton("Continuar");
-        jContinuar.setBounds(374,200, 100,50);
-        //jpContenido.add(jContinuar);
+        jpRectanguloColor = new JPanel();
+        jpRectanguloColor.setSize(519,35);        
+        jpRectanguloColor.setBounds(0,77, 519, 35);
+        jpRectanguloColor.setLayout(null);
+        //jpRectanguloColor.setBackground(Color.RED);
+        //jpContenido.add(jpRectanguloColor);
+        
+        jTerminar = new JButton("Terminar ...");
+        jTerminar.setBounds(374,200, 100,50);
+        jpContenido.add(jTerminar);
+        
         
         System.out.println(nombreJugador);
         
@@ -163,99 +234,116 @@ public class VentanaJuego extends JFrame{
         jOpcion3.addActionListener(manejadorEventos);
         jOpcion4.addActionListener(manejadorEventos);
         jOpcion5.addActionListener(manejadorEventos);
-        jContinuar.addActionListener(manejadorEventos);
-         //no funciona del todo bien, ni idea de porqué
+        jTerminar.addActionListener(manejadorEventos);
+        
+        addWindowListener(new WindowAdapter() {
+             @Override
+            public void windowClosing(WindowEvent evt) {
+                cerrarVentana();
+            }
+        });
     }
+        
     
-    private void siguientePalabra(){
-       posicionActual++;
-       jlPalabra.setText(palabras.getPalabra(posicionActual,idTematica));
-    }    
-    
-    private void checkerOpcion(String botonAnalizar){
-       modelo.Tematica palabras = new Tematica();
-       //String palabraActual = palabras.getPalabra(posicionActual,idTematica); 
-       
-       String palabraRevisada = palabras.concatenar(posicionActual, idTematica);
-       char cadenaRevisar = palabras.getChar(posicionActual, idTematica);
-       int posicionRevisar = palabras.posicionLetra(posicionActual,idTematica);
-       char letraBoton = (botonAnalizar.toCharArray())[0];
-       
-       if(letraBoton == cadenaRevisar){
-           
-            if(posicionActual <= palabras.getLength(idTematica)-1){
-                
-                System.out.println( "Posicion Actual: "+ posicionActual);
-                jlPalabra.setText(palabraRevisada);
-                System.out.println("Posicion Actual: " + posicionActual);
-                System.out.println("Tematica: " + idTematica);
-                System.out.println("Palabra Actual: " + palabraActual);
-                System.out.println("Palabra Revisada: " + palabraRevisada);
-                aciertos++;
-                jpContenido.add(jContinuar);
-                jpContenido.revalidate();
-                jpContenido.repaint();
-                //aquí iría el método que verificaría si es la opción correcta
-                //Jugador jugador = new Jugador(super.savedNombre); 
-                //VentanaJuego ventanaJuego = new VentanaJuego(jugador);
-                
-            } else {
-                jlPalabra.setText(palabraRevisada);
-                aciertos++;
-                JOptionPane.showMessageDialog(null,"El juego ha terminado", 
-                    "GAME OVER", JOptionPane.ERROR_MESSAGE);
-              }
-       }else{
-            JOptionPane.showMessageDialog(null,"¡Vocal equivocada! vuelve a intentarlo", 
-              "¡Oops!", JOptionPane.ERROR_MESSAGE);
-            System.out.println("Boton: " + letraBoton);
-            System.out.println("Letra respuesta: " + cadenaRevisar);
-            intentosFail++;
-             }
-    }
-    
-
+        
     class ManejadorDeEventos implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent evento){
-            String botonAnalizar;
-            if(evento.getSource() == jOpcion1){
-                botonAnalizar = jOpcion1.getText();
-                checkerOpcion(botonAnalizar);
-                jlFallos.setText(String.valueOf(intentosFail));
-                jlAciertos.setText(String.valueOf(aciertos));
+            
+            if(evento.getSource() == jOpcion1 && vocalCensurada == 'a'){
+               jlPalabra.setText(palabra);
+               JOptionPane.showMessageDialog(null, "Es la vocal correcta");
+               IniciarJuego();
+               jlPalabra.setText(palabraCensurada);
+               colocarImagenes(idTematica,posicion);
+               contadorAciertos++;
+               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+               
+            } else if (evento.getSource() == jOpcion2 && vocalCensurada == 'e' ){
+               jlPalabra.setText(palabra);
+               JOptionPane.showMessageDialog(null, "Es la vocal correcta"); 
+               IniciarJuego();
+               jlPalabra.setText(palabraCensurada);
+               contadorAciertos++;
+               colocarImagenes(idTematica,posicion);
+               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+               
+            } else if (evento.getSource() == jOpcion3 && vocalCensurada == 'i'){
+               jlPalabra.setText(palabra);
+               JOptionPane.showMessageDialog(null, "Es la vocal correcta"); 
+               IniciarJuego();
+               jlPalabra.setText(palabraCensurada);
+               contadorAciertos++;
+               colocarImagenes(idTematica,posicion);
+               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+               
+            } else if (evento.getSource() == jOpcion4 && vocalCensurada == 'o'){
+               jlPalabra.setText(palabra);
+                JOptionPane.showMessageDialog(null, "Es la vocal correcta");    
+                IniciarJuego();
+                jlPalabra.setText(palabraCensurada);
+                contadorAciertos++;
+                colocarImagenes(idTematica,posicion);
+                jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
                 
-            } else if (evento.getSource() == jOpcion2){
-                botonAnalizar = jOpcion2.getText();
-                checkerOpcion(botonAnalizar);
-                jlFallos.setText(String.valueOf(intentosFail));
-                jlAciertos.setText(String.valueOf(aciertos));
-               //posicionActual++;
-               //jlPalabra.setText(palabras.getPalabra(posicionActual,idTematica));
-               //aquí iría el método que verificaría si es la opción correcta
-               //Jugador jugador = new Jugador(super.savedNombre); 
-               //VentanaJuego ventanaJuego = new VentanaJuego(jugador); 
-            } else if (evento.getSource() == jOpcion3){
-                botonAnalizar = jOpcion3.getText();
-                checkerOpcion(botonAnalizar);
-                jlFallos.setText(String.valueOf(intentosFail));
-                jlAciertos.setText(String.valueOf(aciertos));
-            } else if (evento.getSource() == jOpcion4){
-                botonAnalizar = jOpcion4.getText();
-                checkerOpcion(botonAnalizar);
-                jlFallos.setText(String.valueOf(intentosFail));
-                jlAciertos.setText(String.valueOf(aciertos));
-            } else if (evento.getSource() == jOpcion5){
-                botonAnalizar = jOpcion5.getText();
-                checkerOpcion(botonAnalizar);
-                jlFallos.setText(String.valueOf(intentosFail));
-                jlAciertos.setText(String.valueOf(aciertos));
-            } else if (evento.getSource() == jContinuar){
-                siguientePalabra();
-                jpContenido.remove(jContinuar);
-                jpContenido.revalidate();
-                jpContenido.repaint();
-            }
+            } else if (evento.getSource() == jOpcion5 && vocalCensurada == 'u'){
+               jlPalabra.setText(palabra);
+               JOptionPane.showMessageDialog(null, "Es la vocal correcta");    
+               IniciarJuego();
+               jlPalabra.setText(palabraCensurada);
+               contadorAciertos++;
+               colocarImagenes(idTematica,posicion);
+               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+               
+            } else if (evento.getSource() == jTerminar){
+                cerrarVentana();
+            
+            } else {
+                JOptionPane.showMessageDialog(null, "Es la vocal incorrecta, intenta de nuevo");
+                contadorFallos++;
+                jlContadorFallos.setText("Fallos: " + String.valueOf(contadorFallos));
+                TerminarJuego();
+            }  
+        }
+        
+    }
+    
+    
+    
+    private void TerminarJuego () {
+    if (contadorFallos == 5){
+        int respuesta;
+        respuesta = JOptionPane.showConfirmDialog(
+                    null,"Se han acabado tus oportunidades, ¿deseas volver a empezar?", "GAME OVER",
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.WARNING_MESSAGE);
+        if(respuesta == JOptionPane.YES_OPTION){
+            VentanaEstadisticas ventanaEstadistica = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
+            VentanaNombre ventana = new VentanaNombre();
+            dispose();
+        } else {
+            VentanaEstadisticas ventana = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
+             //System.exit(0);
+        }
+    }
+        
+    }
+    
+    
+    
+    
+    
+    private void cerrarVentana(){
+        int respuesta;
+
+        respuesta = JOptionPane.showConfirmDialog(
+                    null,"¿Realmente desea abandonar el juego?", "Advertencia",
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.WARNING_MESSAGE);
+        if(respuesta == JOptionPane.YES_OPTION){
+            VentanaEstadisticas ventana = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
+            dispose();
+            //System.exit(0);
         }
     }
 } 
