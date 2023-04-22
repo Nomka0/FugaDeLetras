@@ -186,11 +186,7 @@ public class VentanaJuego extends JFrame{
         jlPalabra.setForeground(Color.WHITE);
         jlPalabra.setFont(new Font("arial", Font.BOLD, 20));
         jpContenido.add(jlPalabra);
-        
-//{"Leon","Perro","Gato","Tigre","Hormiga","Tortuga", "Vaca", "Raton", "Conejo", "Pato"};
-        jlIlustracion = new JLabel(new ImageIcon());
-        jlIlustracion.setBounds(40,70, 440,50);
-        jpContenido.add(jlIlustracion);        
+             
 
         
         jOpcion1 = new JButton("A");
