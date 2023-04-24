@@ -4,11 +4,14 @@
  */
 package vista;
 
+import java.util.Map;
+import java.util.HashMap;
 import modelo.Tematica;
 import modelo.Jugador;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import javax.swing.ImageIcon;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +47,13 @@ public class VentanaJuego extends JFrame{
     private int posicion;
     private int idTematica;
     private char[] vocales = {'a', 'e', 'i', 'o', 'u'};
+    private String[] animalesImg = {"img/animales/leon.png", "img/animales/perro.png",
+        "img/animales/gato.png", "img/animales/tigre.png", "img/animales/hormiga.png", "img/animales/tortuga.png",
+        "img/animales/vaca.png", "img/animales/raton.png", "img/animales/conejo.png", "img/animales/pato.png"};
+    private String[] frutasImg = {"img/frutas/manzana.png", "img/frutas/pera.png", "img/frutas/uva.png", 
+        "img/frutas/banano.png", "img/frutas/durazno.png", "img/frutas/fresa.png", "img/frutas/melon.png", 
+        "img/frutas/cereza.png", "img/frutas/mango.png", "img/frutas/ciruela.png"};
+    private HashMap<Integer, String> imagenesPrint = new HashMap<>();
     private String palabraCensurada;
     private char vocalCensurada;
     modelo.Tematica palabras = new Tematica();
@@ -56,7 +66,8 @@ public class VentanaJuego extends JFrame{
        this.idTematica = idTematica;
        IniciarJuego();
        iniciarComponentes();
-       colocarImagenes(idTematica, posicion);
+       HashmapImagenes();
+       ColocarImagenes();
         System.out.println(posicion);
     }
     
@@ -76,7 +87,7 @@ public class VentanaJuego extends JFrame{
         }
         
 //{"Rojo","Amarillo","Naranja","Verde","Rosa","Negro", "Morado", "Azul","Gris", "Blanco"       
-        private void cambiaColor(int color){
+        private void CambiaColor(int color){
             jpContenido.add(jpRectanguloColor);
             switch(color){
                 case 0:
@@ -113,18 +124,41 @@ public class VentanaJuego extends JFrame{
             }
             
         }
-        
-        
-        private void colocarImagenes(int modo,int posicion){
-            switch(modo){
+
+        private void HashmapImagenes(){//un hashmap, para cambiar facilmente al set de archivos de frutas o animales         
+            switch (idTematica) {
                 case 1:
+                    for(int i = 0; i < palabras.getLength(idTematica); i++){
+                        imagenesPrint.put(i, animalesImg[i]);
+                        System.out.println(imagenesPrint.get(i)); 
+                    }
+                    break;
+                case 3:
+                    for(int i = 0; i < palabras.getLength(idTematica); i++){
+                        imagenesPrint.put(i, frutasImg[i]);
+                        System.out.println(imagenesPrint.get(i));
+                    }
+                    break;
+                default:
+                    System.out.println("Colores"); 
+                    break;
+            }
+        }
+        
+        private void ColocarImagenes(){
+            switch(idTematica){
+                case 1: case 3://ya con el hashmap aquí cambia a frutas o animales, según ese anterior método
+                    ImageIcon imagen = new ImageIcon(imagenesPrint.get(posicion));
+                    Image imagenTransformar = imagen.getImage();//un ImageIcon, que se transforma con getImage para darle un tamaño moderado y poner la imagen en en el canvas
+                    Image nuevaImagen = imagenTransformar.getScaledInstance(60, 60,  java.awt.Image.SCALE_SMOOTH);
+                    imagen = new ImageIcon(nuevaImagen);
+                    jlIlustracion = new JLabel(imagen); //un jlabel en donde ponemos la imagen ImageIcon
+                    jlIlustracion.setBounds(115,74, 60,60);
+                    jpContenido.add(jlIlustracion);    
                     //return palabrasAnimales.length-1;
                     break;
                 case 2:
-                    cambiaColor(posicion);
-                    break;
-                case 3:
-                    //return palabrasFrutas.length-1;
+                    CambiaColor(posicion);
                     break;
             }               
         }
@@ -186,9 +220,8 @@ public class VentanaJuego extends JFrame{
         jlPalabra.setForeground(Color.WHITE);
         jlPalabra.setFont(new Font("arial", Font.BOLD, 20));
         jpContenido.add(jlPalabra);
-             
 
-        
+  
         jOpcion1 = new JButton("A");
         jOpcion1.setBounds(70,140, 50,50);
         jpContenido.add(jOpcion1);
@@ -235,64 +268,79 @@ public class VentanaJuego extends JFrame{
         addWindowListener(new WindowAdapter() {
              @Override
             public void windowClosing(WindowEvent evt) {
-                cerrarVentana();
+                CerrarVentana();
             }
         });
     }
+     
         
+    private void VocalCorrecta(){
+        if(idTematica != 2){
+            jpContenido.remove(jlIlustracion);
+        }
+        jlPalabra.setText(palabra);
+        JOptionPane.showMessageDialog(null, "Es la vocal correcta");
+        IniciarJuego();
+        ColocarImagenes();
+        jlPalabra.setText(palabraCensurada);
+        contadorAciertos++;
+        jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+        jpContenido.revalidate();
+        jpContenido.repaint(); 
+    }    
+
+    private void TerminarJuego () {
+        if (contadorFallos == 5){
+            int respuesta;
+            respuesta = JOptionPane.showConfirmDialog(
+                    null,"Se han acabado tus oportunidades, ¿deseas volver a empezar?", "GAME OVER",
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.WARNING_MESSAGE);
+            if(respuesta == JOptionPane.YES_OPTION){
+                VentanaEstadisticas ventanaEstadistica = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
+                VentanaNombre ventana = new VentanaNombre();
+                dispose();
+        }   else {
+            VentanaEstadisticas ventana = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
+             //System.exit(0);
+            }
+        }   
+    }
     
+    private void CerrarVentana(){
+        int respuesta;
+        respuesta = JOptionPane.showConfirmDialog(
+                    null,"¿Realmente desea abandonar el juego?", "Advertencia",
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.WARNING_MESSAGE);
+        if(respuesta == JOptionPane.YES_OPTION){
+            VentanaEstadisticas ventana = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
+            dispose();
+            //System.exit(0);
+        }
+    }
         
     class ManejadorDeEventos implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent evento){
             
             if(evento.getSource() == jOpcion1 && vocalCensurada == 'a'){
-               jlPalabra.setText(palabra);
-               JOptionPane.showMessageDialog(null, "Es la vocal correcta");
-               IniciarJuego();
-               jlPalabra.setText(palabraCensurada);
-               colocarImagenes(idTematica,posicion);
-               contadorAciertos++;
-               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+                VocalCorrecta();
                
             } else if (evento.getSource() == jOpcion2 && vocalCensurada == 'e' ){
-               jlPalabra.setText(palabra);
-               JOptionPane.showMessageDialog(null, "Es la vocal correcta"); 
-               IniciarJuego();
-               jlPalabra.setText(palabraCensurada);
-               contadorAciertos++;
-               colocarImagenes(idTematica,posicion);
-               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+                VocalCorrecta();
                
             } else if (evento.getSource() == jOpcion3 && vocalCensurada == 'i'){
-               jlPalabra.setText(palabra);
-               JOptionPane.showMessageDialog(null, "Es la vocal correcta"); 
-               IniciarJuego();
-               jlPalabra.setText(palabraCensurada);
-               contadorAciertos++;
-               colocarImagenes(idTematica,posicion);
-               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+                VocalCorrecta();
                
             } else if (evento.getSource() == jOpcion4 && vocalCensurada == 'o'){
-               jlPalabra.setText(palabra);
-                JOptionPane.showMessageDialog(null, "Es la vocal correcta");    
-                IniciarJuego();
-                jlPalabra.setText(palabraCensurada);
-                contadorAciertos++;
-                colocarImagenes(idTematica,posicion);
-                jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+                VocalCorrecta();
                 
             } else if (evento.getSource() == jOpcion5 && vocalCensurada == 'u'){
-               jlPalabra.setText(palabra);
-               JOptionPane.showMessageDialog(null, "Es la vocal correcta");    
-               IniciarJuego();
-               jlPalabra.setText(palabraCensurada);
-               contadorAciertos++;
-               colocarImagenes(idTematica,posicion);
-               jlContadorAciertos.setText("Aciertos: " + String.valueOf(contadorAciertos));
+                VocalCorrecta();
                
             } else if (evento.getSource() == jTerminar){
-                cerrarVentana();
+                CerrarVentana();
             
             } else {
                 JOptionPane.showMessageDialog(null, "Es la vocal incorrecta, intenta de nuevo");
@@ -304,42 +352,4 @@ public class VentanaJuego extends JFrame{
         
     }
     
-    
-    
-    private void TerminarJuego () {
-    if (contadorFallos == 5){
-        int respuesta;
-        respuesta = JOptionPane.showConfirmDialog(
-                    null,"Se han acabado tus oportunidades, ¿deseas volver a empezar?", "GAME OVER",
-                    JOptionPane.YES_NO_OPTION, 
-                    JOptionPane.WARNING_MESSAGE);
-        if(respuesta == JOptionPane.YES_OPTION){
-            VentanaEstadisticas ventanaEstadistica = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
-            VentanaNombre ventana = new VentanaNombre();
-            dispose();
-        } else {
-            VentanaEstadisticas ventana = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
-             //System.exit(0);
-        }
-    }
-        
-    }
-    
-    
-    
-    
-    
-    private void cerrarVentana(){
-        int respuesta;
-
-        respuesta = JOptionPane.showConfirmDialog(
-                    null,"¿Realmente desea abandonar el juego?", "Advertencia",
-                    JOptionPane.YES_NO_OPTION, 
-                    JOptionPane.WARNING_MESSAGE);
-        if(respuesta == JOptionPane.YES_OPTION){
-            VentanaEstadisticas ventana = new VentanaEstadisticas(contadorAciertos,contadorFallos,nombreJugador);
-            dispose();
-            //System.exit(0);
-        }
-    }
 } 
